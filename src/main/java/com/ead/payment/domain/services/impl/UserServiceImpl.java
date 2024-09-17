@@ -3,6 +3,7 @@ package com.ead.payment.domain.services.impl;
 import com.ead.payment.api.dtos.UserDTO;
 import com.ead.payment.api.dtos.UserEventDTO;
 import com.ead.payment.api.dtos.converter.UserConverter;
+import com.ead.payment.domain.enums.PaymentStatus;
 import com.ead.payment.domain.models.UserModel;
 import com.ead.payment.domain.repositories.UserRepository;
 import com.ead.payment.domain.services.UserService;
@@ -24,6 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO saveUser(UserEventDTO userEventDTO) {
         UserModel userModel = userConverter.toEntity(userEventDTO);
+        userModel.setPaymentStatus(PaymentStatus.NOTSTARTED);
         return userConverter.toDTO(userRepository.save(userModel));
     }
 
