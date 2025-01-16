@@ -1,4 +1,4 @@
-package com.ead.payment.api.dtos.converter;
+package com.ead.payment.api.converter;
 
 import com.ead.payment.api.dtos.UserDTO;
 import com.ead.payment.api.dtos.UserEventDTO;
