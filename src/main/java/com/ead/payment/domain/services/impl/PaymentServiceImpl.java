@@ -5,6 +5,7 @@ import com.ead.payment.api.dtos.PaymentDTO;
 import com.ead.payment.api.dtos.PaymentRequestDTO;
 import com.ead.payment.domain.enums.PaymentControl;
 import com.ead.payment.domain.exceptions.PaymentException;
+import com.ead.payment.domain.exceptions.PaymentNotFoundException;
 import com.ead.payment.domain.models.CreditCardModel;
 import com.ead.payment.domain.models.PaymentModel;
 import com.ead.payment.domain.models.UserModel;
@@ -13,6 +14,9 @@ import com.ead.payment.domain.repositories.PaymentRepository;
 import com.ead.payment.domain.services.PaymentService;
 import com.ead.payment.domain.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +56,22 @@ public class PaymentServiceImpl implements PaymentService {
         paymentModel.setUser(userModel);
         paymentRepository.save(paymentModel);
         return paymentConverter.toDTO(paymentModel, userId);
+    }
+
+    @Override
+    public Page<PaymentModel> findAllUser(Specification<PaymentModel> spec, Pageable pageable) {
+        return paymentRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public PaymentDTO findPaymentByUser(UUID userId, UUID paymentId) {
+        PaymentModel paymentByUser = optionalPaymentByUser(userId, paymentId);
+        return paymentConverter.toDTO(paymentByUser, userId);
+    }
+
+    private PaymentModel optionalPaymentByUser(UUID userId, UUID paymentId) {
+        return paymentRepository.findPaymentByUser(userId, paymentId)
+                .orElseThrow(() -> new PaymentNotFoundException("Payment not found for this user"));
     }
 
     @Override
