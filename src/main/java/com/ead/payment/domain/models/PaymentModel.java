@@ -37,5 +37,6 @@ public class PaymentModel {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private UserModel user;
 }

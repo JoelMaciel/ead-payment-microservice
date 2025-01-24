@@ -2,8 +2,9 @@ package com.ead.payment.domain.services.impl;
 
 import com.ead.payment.api.dtos.UserDTO;
 import com.ead.payment.api.dtos.UserEventDTO;
-import com.ead.payment.api.dtos.converter.UserConverter;
+import com.ead.payment.api.converter.UserConverter;
 import com.ead.payment.domain.enums.PaymentStatus;
+import com.ead.payment.domain.exceptions.UserNotFoundException;
 import com.ead.payment.domain.models.UserModel;
 import com.ead.payment.domain.repositories.UserRepository;
 import com.ead.payment.domain.services.UserService;
@@ -33,5 +34,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(UUID userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public UserModel optionalUser(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
     }
 }
