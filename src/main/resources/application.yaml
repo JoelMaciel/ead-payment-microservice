@@ -1,1 +1,56 @@
-spring.application.name=payment
+server:
+  port: 8086
+  servlet:
+    context-path: "/ead-payment/"
+
+spring:
+  application:
+    name: ead-payment-service
+  datasource:
+    url: jdbc:postgresql://localhost:5436/payment
+    username: joel
+    password: docker
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+          jdbc:
+            lob.non-contextual-creation: true
+      show-sql: true
+    flyway:
+      locations: classpath:db/migration, classpath:db/testdb
+      baselineOnMigrate: true
+    rabbitmq:
+      host: localhost
+      port: 5672
+      username: guest
+      password: guest
+
+ead:
+  serviceRegistry:
+    username: ${NAME}
+    password: ${PASSWORD}
+  auth:
+    jwtSecret: ${SECRET_TOKEN}
+    jwtExpirationMs: 14400000
+  broker:
+    exchange:
+      userEventExchange: ead.userevent
+    queue:
+      userEventQueue:
+        name: ead.userevent.ms.payment
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: 'http://${ead.serviceRegistry.username}:${ead.serviceRegistry.password}@localhost:8761/eureka'
+  instance:
+    hostname: localhost
+
+logging:
+  level:
+    com.ead: TRACE
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate: INFO
